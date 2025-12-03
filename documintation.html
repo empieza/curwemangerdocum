@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curwe Chat Manager - Документация</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Базовые стили из style.css */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary-color: #EC4899;
+            --background: #0F0F23;
+            --surface: #1A1B2F;
+            --surface-light: #2D2B55;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0C0;
+            --text-muted: #6B7280;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--background) 0%, #1a1038 50%, #2d1b69 100%);
+            z-index: -1;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Хедер */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Кнопки */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-light);
+            transform: translateY(-2px);
+        }
+
+        /* Основное содержание */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2rem;
+            padding: 120px 0 50px;
+            min-height: 100vh;
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            position: sticky;
+            top: 120px;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-links {
+            list-style: none;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 10px 15px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        /* Содержимое документации */
+        .doc-content {
+            border-radius: 20px;
+            padding: 2.5rem;
+        }
+
+        .doc-section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .doc-section:last-child {
+            border-bottom: none;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .doc-subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            color: var(--primary-light);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .doc-text {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        /* Команды */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .command-card {
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .command-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-light);
+        }
+
+        .command-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .command-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .command-level {
+            background: var(--glass-bg);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .level-5 { color: #FF6B6B; }
+        .level-4 { color: #FF9E6B; }
+        .level-3 { color: #FFD166; }
+        .level-2 { color: #06D6A0; }
+        .level-1 { color: #118AB2; }
+        .level-0 { color: var(--text-secondary); }
+
+        .command-aliases {
+            margin-bottom: 1rem;
+        }
+
+        .alias-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .alias-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .alias {
+            background: var(--surface-light);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--primary-light);
+        }
+
+        .command-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Информационные блоки */
+        .info-box {
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .info-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .info-title i {
+            color: var(--primary-color);
+        }
+
+        /* Уровни доступа */
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .level-card {
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .level-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-name {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .level-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Таблицы */
+        .command-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .command-table th {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        .command-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+        }
+
+        .command-table tr:hover td {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+        }
+
+        /* Футер */
+        .footer {
+            background: transparent;
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                height: auto;
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .doc-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .command-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .alias-list {
+                justify-content: flex-start;
+            }
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .command-card, .level-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <header class="header">
+        <nav class="nav">
+            <a href="#home" class="logo">
+                <i class="fas fa-robot"></i>
+                <span>Curwe Chat Manager</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#home" class="nav-link">Главная</a>
+                <a href="#commands" class="nav-link">Команды</a>
+                <a href="#levels" class="nav-link">Уровни доступа</a>
+                <a href="#setup" class="nav-link">Настройка</a>
+                <a href="https://t.me/curwechatmanagerbot" target="_blank" class="btn btn-primary">
+                    <i class="fab fa-telegram"></i>
+                    Добавить бота
+                </a>
+            </div>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <div class="main-content">
+            <!-- Боковая панель навигации -->
+            <aside class="sidebar glass">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Навигация</h3>
+                    <ul class="sidebar-links">
+                        <li><a href="#home" class="sidebar-link active"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="#commands" class="sidebar-link"><i class="fas fa-terminal"></i> Команды</a></li>
+                        <li><a href="#levels" class="sidebar-link"><i class="fas fa-shield-alt"></i> Уровни доступа</a></li>
+                        <li><a href="#setup" class="sidebar-link"><i class="fas fa-cog"></i> Настройка</a></li>
+                        <li><a href="#usage" class="sidebar-link"><i class="fas fa-book"></i> Использование</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Категории команд</h3>
+                    <ul class="sidebar-links">
+                        <li><a href="#admin-commands" class="sidebar-link"><i class="fas fa-crown"></i> Административные</a></li>
+                        <li><a href="#moder-commands" class="sidebar-link"><i class="fas fa-user-shield"></i> Модерация</a></li>
+                        <li><a href="#user-commands" class="sidebar-link"><i class="fas fa-user"></i> Пользовательские</a></li>
+                        <li><a href="#util-commands" class="sidebar-link"><i class="fas fa-tools"></i> Утилиты</a></li>
+                        <li><a href="#chat-commands" class="sidebar-link"><i class="fas fa-comments"></i> Управление чатом</a></li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Быстрые ссылки</h3>
+                    <ul class="sidebar-links">
+                        <li><a href="#faq" class="sidebar-link"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                        <li><a href="#support" class="sidebar-link"><i class="fas fa-headset"></i> Поддержка</a></li>
+                        <li><a href="#changelog" class="sidebar-link"><i class="fas fa-history"></i> История версий</a></li>
+                    </ul>
+                </div>
+            </aside>
+            
+            <!-- Основное содержимое -->
+            <div class="doc-content glass">
+                <!-- Главная секция -->
+                <section id="home" class="doc-section">
+                    <h1 class="doc-title">Curwe Chat Manager - Документация</h1>
+                    <p class="doc-text">
+                        Добро пожаловать в документацию Curwe Chat Manager — многофункционального Telegram бота для управления чатами 
+                        с поддержкой русского и английского языков, системой уровней доступа и широкими возможностями модерации.
+                    </p>
+                    
+                    <div class="info-box glass">
+                        <div class="info-title">
+                            <i class="fas fa-bolt"></i>
+                            <span>Основные возможности</span>
+                        </div>
+                        <p class="doc-text">
+                            • Управление пользователями (варны, муты, баны)<br>
+                            • Система уровней доступа (от 0 до 5)<br>
+                            • Поддержка русских и английских команд<br>
+                            • Статистика чата и пользователей<br>
+                            • Настраиваемые приветственные сообщения<br>
+                            • Функция блокировки чата<br>
+                            • Кастомные алиасы команд
+                        </p>
+                    </div>
+                </section>
+                
+                <!-- Команды -->
+                <section id="commands" class="doc-section">
+                    <h2 class="doc-title">Команды бота</h2>
+                    <p class="doc-text">
+                        Бот поддерживает команды на русском и английском языках, а также алиасы (синонимы) для удобства использования. 
+                        Команды можно вызывать через "/" (например, <code>/warn</code>) или через "+" для русских команд (например, <code>+варн</code>).
+                    </p>
+                    
+                    <h3 class="doc-subtitle" id="admin-commands">Административные команды</h3>
+                    <div class="commands-grid">
+                        <!-- Команда debug -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">debug</span>
+                                <span class="command-level level-5">Уровень 5</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/debug</span>
+                                    <span class="alias">/отладка</span>
+                                    <span class="alias">+дебаг</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Отладочная информация о системе и чатах</p>
+                        </div>
+                        
+                        <!-- Команда restart -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">restart</span>
+                                <span class="command-level level-5">Уровень 5</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/restart</span>
+                                    <span class="alias">/перезапуск</span>
+                                    <span class="alias">+рестарт</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Перезапуск бота (только для владельца)</p>
+                        </div>
+                        
+                        <!-- Команда alias -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">alias</span>
+                                <span class="command-level level-5">Уровень 5</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/alias</span>
+                                    <span class="alias">/алиас</span>
+                                    <span class="alias">+алиас</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Управление кастомными алиасами команд</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="doc-subtitle" id="moder-commands">Команды модерации</h3>
+                    <div class="commands-grid">
+                        <!-- Команда warn -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">warn</span>
+                                <span class="command-level level-2">Уровень 2</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/warn</span>
+                                    <span class="alias">/варн</span>
+                                    <span class="alias">+варн</span>
+                                    <span class="alias">+пред</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Выдать предупреждение пользователю</p>
+                        </div>
+                        
+                        <!-- Команда mute -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">mute</span>
+                                <span class="command-level level-2">Уровень 2</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/mute</span>
+                                    <span class="alias">/мут</span>
+                                    <span class="alias">+мут</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Замутить пользователя на время</p>
+                        </div>
+                        
+                        <!-- Команда ban -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">ban</span>
+                                <span class="command-level level-3">Уровень 3</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/ban</span>
+                                    <span class="alias">/бан</span>
+                                    <span class="alias">+бан</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Забанить пользователя в чате</p>
+                        </div>
+                        
+                        <!-- Команда kick -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">kick</span>
+                                <span class="command-level level-2">Уровень 2</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/kick</span>
+                                    <span class="alias">/кик</span>
+                                    <span class="alias">+кик</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Исключить пользователя из чата</p>
+                        </div>
+                        
+                        <!-- Команда clean -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">clean</span>
+                                <span class="command-level level-2">Уровень 2</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/clean</span>
+                                    <span class="alias">/очистить</span>
+                                    <span class="alias">+очистка</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Очистить сообщения в чате</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="doc-subtitle" id="user-commands">Пользовательские команды</h3>
+                    <div class="commands-grid">
+                        <!-- Команда menu -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">menu</span>
+                                <span class="command-level level-0">Уровень 0</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/menu</span>
+                                    <span class="alias">/меню</span>
+                                    <span class="alias">+меню</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Главное меню бота с кнопками</p>
+                        </div>
+                        
+                        <!-- Команда profile -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">profile</span>
+                                <span class="command-level level-0">Уровень 0</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/profile</span>
+                                    <span class="alias">/профиль</span>
+                                    <span class="alias">+профиль</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Показать профиль пользователя</p>
+                        </div>
+                        
+                        <!-- Команда report -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">report</span>
+                                <span class="command-level level-0">Уровень 0</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/report</span>
+                                    <span class="alias">/жалоба</span>
+                                    <span class="alias">+жалоба</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Пожаловаться на пользователя</p>
+                        </div>
+                        
+                        <!-- Команда help -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">help</span>
+                                <span class="command-level level-0">Уровень 0</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/help</span>
+                                    <span class="alias">/помощь</span>
+                                    <span class="alias">+помощь</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Справка по командам бота</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="doc-subtitle" id="chat-commands">Управление чатом</h3>
+                    <div class="commands-grid">
+                        <!-- Команда chaton -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">chaton</span>
+                                <span class="command-level level-2">Уровень 2</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/chaton</span>
+                                    <span class="alias">+чат</span>
+                                    <span class="alias">/lockchat</span>
+                                    <span class="alias">/заблокировать</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Заблокировать чат для обычных пользователей</p>
+                        </div>
+                        
+                        <!-- Команда chatoff -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">chatoff</span>
+                                <span class="command-level level-2">Уровень 2</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/chatoff</span>
+                                    <span class="alias">-чат</span>
+                                    <span class="alias">/unlockchat</span>
+                                    <span class="alias">/разблокировать</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Разблокировать чат</p>
+                        </div>
+                        
+                        <!-- Команда settings -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">settings</span>
+                                <span class="command-level level-3">Уровень 3</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/settings</span>
+                                    <span class="alias">/настройки</span>
+                                    <span class="alias">+настройки</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Настройки чата (приветствия, авто-модерация)</p>
+                        </div>
+                        
+                        <!-- Команда info -->
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">info</span>
+                                <span class="command-level level-1">Уровень 1</span>
+                            </div>
+                            <div class="command-aliases">
+                                <span class="alias-label">Алиасы:</span>
+                                <div class="alias-list">
+                                    <span class="alias">/info</span>
+                                    <span class="alias">/инфо</span>
+                                    <span class="alias">+инфо</span>
+                                </div>
+                            </div>
+                            <p class="command-description">Информация о чате и статистика</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Уровни доступа -->
+                <section id="levels" class="doc-section">
+                    <h2 class="doc-title">Система уровней доступа</h2>
+                    <p class="doc-text">
+                        В Curwe Chat Manager реализована система уровней доступа от 0 до 5. Каждый уровень определяет, 
+                        какие команды может использовать пользователь.
+                    </p>
+                    
+                    <div class="levels-grid">
+                        <div class="level-card glass">
+                            <div class="level-number level-0">0</div>
+                            <div class="level-name">Пользователь</div>
+                            <p class="level-desc">Обычные участники чата. Могут использовать базовые команды: menu, profile, help, report.</p>
+                        </div>
+                        
+                        <div class="level-card glass">
+                            <div class="level-number level-1">1</div>
+                            <div class="level-name">Помощник</div>
+                            <p class="level-desc">Могут просматривать списки варнов, мутов, банов. Могут закреплять сообщения.</p>
+                        </div>
+                        
+                        <div class="level-card glass">
+                            <div class="level-number level-2">2</div>
+                            <div class="level-name">Модератор</div>
+                            <p class="level-desc">Могут выдавать варны, муты, кикать пользователей, очищать сообщения, блокировать чат.</p>
+                        </div>
+                        
+                        <div class="level-card glass">
+                            <div class="level-number level-3">3</div>
+                            <div class="level-name">Администратор</div>
+                            <p class="level-desc">Могут банить пользователей, размучивать, настраивать чат, устанавливать описания другим.</p>
+                        </div>
+                        
+                        <div class="level-card glass">
+                            <div class="level-number level-4">4</div>
+                            <div class="level-name">Старший админ</div>
+                            <p class="level-desc">Могут разбанивать, повышать/понижать уровни других пользователей.</p>
+                        </div>
+                        
+                        <div class="level-card glass">
+                            <div class="level-number level-5">5</div>
+                            <div class="level-name">Владелец</div>
+                            <p class="level-desc">Полный доступ ко всем функциям, включая отладку, перезапуск, управление алиасами.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box glass">
+                        <div class="info-title">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Как назначаются уровни?</span>
+                        </div>
+                        <p class="doc-text">
+                            <strong>Уровень 0</strong> присваивается автоматически всем новым пользователям.<br>
+                            <strong>Уровень 1-2</strong> могут быть назначены администраторами через команды <code>/promote</code> и <code>/demote</code>.<br>
+                            <strong>Уровень 3</strong> автоматически присваивается администраторам чата в Telegram.<br>
+                            <strong>Уровень 5</strong> только для владельца бота (указывается в config.json).
+                        </p>
+                    </div>
+                </section>
+                
+                <!-- Настройка -->
+                <section id="setup" class="doc-section">
+                    <h2 class="doc-title">Настройка бота</h2>
+                    <p class="doc-text">
+                        Для начала работы с ботом выполните следующие шаги:
+                    </p>
+                    
+                    <div class="info-box glass">
+                        <div class="info-title">
+                            <i class="fas fa-cog"></i>
+                            <span>Быстрая настройка</span>
+                        </div>
+                        <p class="doc-text">
+                            1. <strong>Добавьте бота в чат</strong> и дайте ему права администратора<br>
+                            2. <strong>Автоматическая инициализация</strong> — бот создаст базу данных<br>
+                            3. <strong>Настройте приветствия</strong> командой <code>/welcomeset</code><br>
+                            4. <strong>Назначьте уровни</strong> модераторам через <code>/promote</code><br>
+                            5. <strong>Настройте параметры</strong> в <code>/settings</code>
+                        </p>
+                    </div>
+                    
+                    <h3 class="doc-subtitle">Важные команды для настройки</h3>
+                    <table class="command-table glass">
+                        <thead>
+                            <tr>
+                                <th>Команда</th>
+                                <th>Уровень</th>
+                                <th>Описание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/dbcreate</code></td>
+                                <td><span class="level-5">5</span></td>
+                                <td>Создать базу данных для чата (если автоматически не создалась)</td>
+                            </tr>
+                            <tr>
+                                <td><code>/welcomeset</code></td>
+                                <td><span class="level-5">5</span></td>
+                                <td>Настроить приветственное сообщение для новых участников</td>
+                            </tr>
+                            <tr>
+                                <td><code>/settings</code></td>
+                                <td><span class="level-3">3</span></td>
+                                <td>Настройки чата (авто-варны, авто-муты, приветствия)</td>
+                            </tr>
+                            <tr>
+                                <td><code>/promote @user</code></td>
+                                <td><span class="level-4">4</span></td>
+                                <td>Повысить уровень пользователя</td>
+                            </tr>
+                            <tr>
+                                <td><code>/demote @user</code></td>
+                                <td><span class="level-4">4</span></td>
+                                <td>Понизить уровень пользователя</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- Использование -->
+                <section id="usage" class="doc-section">
+                    <h2 class="doc-title">Использование команд</h2>
+                    <p class="doc-text">
+                        Бот поддерживает несколько форматов команд для удобства использования:
+                    </p>
+                    
+                    <div class="commands-grid">
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">Английский формат</span>
+                            </div>
+                            <div class="alias-list">
+                                <span class="alias">/warn @username</span>
+                                <span class="alias">/mute @username 7d</span>
+                                <span class="alias">/ban @username спам</span>
+                            </div>
+                            <p class="command-description">Классический формат через слеш</p>
+                        </div>
+                        
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">Русский формат (+)</span>
+                            </div>
+                            <div class="alias-list">
+                                <span class="alias">+варн @username</span>
+                                <span class="alias">+мут @username 7d</span>
+                                <span class="alias">+бан @username спам</span>
+                            </div>
+                            <p class="command-description">Русские команды через плюс</p>
+                        </div>
+                        
+                        <div class="command-card glass">
+                            <div class="command-header">
+                                <span class="command-name">Русский формат (-)</span>
+                            </div>
+                            <div class="alias-list">
+                                <span class="alias">-варн @username</span>
+                                <span class="alias">-мут @username</span>
+                                <span class="alias">-бан @username</span>
+                            </div>
+                            <p class="command-description">Отмена действий через минус</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box glass">
+                        <div class="info-title">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Примеры использования</span>
+                        </div>
+                        <p class="doc-text">
+                            <strong>Выдать предупреждение:</strong><br>
+                            <code>/warn @username нарушение правил</code> или <code>+варн @username нарушение правил</code><br><br>
+                            
+                            <strong>Замутить на 3 дня:</strong><br>
+                            <code>/mute @username 3d</code> или <code>+мут @username 3d</code><br><br>
+                            
+                            <strong>Забанить за спам:</strong><br>
+                            <code>/ban @username спам</code> или <code>+бан @username спам</code><br><br>
+                            
+                            <strong>Проверить блокировку чата:</strong><br>
+                            <code>/chatstatus</code> или <code>/статусчата</code>
+                        </p>
+                    </div>
+                </section>
+                
+                <!-- FAQ -->
+                <section id="faq" class="doc-section">
+                    <h2 class="doc-title">Часто задаваемые вопросы</h2>
+                    
+                    <h3 class="doc-subtitle">Как добавить бота в чат?</h3>
+                    <p class="doc-text">
+                        1. Найдите бота <strong>@curwechatmanagerbot</strong> в Telegram<br>
+                        2. Нажмите "Добавить в группу"<br>
+                        3. Выберите чат и дайте боту права администратора<br>
+                        4. Бот автоматически настроится и отправит приветственное сообщение
+                    </p>
+                    
+                    <h3 class="doc-subtitle">Как работает блокировка чата?</h3>
+                    <p class="doc-text">
+                        При блокировке чата командой <code>/lockchat</code> обычные пользователи (уровень 0) не могут отправлять сообщения. 
+                        Модераторы и администраторы могут писать как обычно. Это полезно для временной остановки обсуждений.
+                    </p>
+                    
+                    <h3 class="doc-subtitle">Что такое кастомные алиасы?</h3>
+                    <p class="doc-text">
+                        Алиасы — это пользовательские сокращения для команд. Например, вы можете создать алиас <code>+штраф</code> для команды <code>/warn</code>. 
+                        Управление алиасами доступно через команду <code>/alias</code> (требуется уровень 5).
+                    </p>
+                    
+                    <h3 class="doc-subtitle">Как сбросить настройки чата?</h3>
+                    <p class="doc-text">
+                        Используйте команду <code>/dbcreate</code> для пересоздания базы данных. 
+                        <strong>Внимание:</strong> это удалит всю статистику и настройки чата.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#home" class="footer-link">Главная</a>
+                    <a href="#commands" class="footer-link">Команды</a>
+                    <a href="#levels" class="footer-link">Уровни доступа</a>
+                    <a href="#setup" class="footer-link">Настройка</a>
+                    <a href="#faq" class="footer-link">FAQ</a>
+                </div>
+                <p class="copyright">
+                    © 2023 Curwe Chat Manager. Все права защищены.<br>
+                    Документация обновлена в соответствии с bot.js и levelcommands.json
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Плавная прокрутка к якорям
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Обновляем активный пункт в боковой панели
+                    document.querySelectorAll('.sidebar-link').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                }
+            });
+        });
+        
+        // Автоматическое обновление активного пункта при прокрутке
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.doc-section');
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    document.querySelectorAll('.sidebar-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Анимация появления карточек при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.command-card, .level-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.05}s`;
+            });
+        });
+    </script>
+</body>
+</html>
